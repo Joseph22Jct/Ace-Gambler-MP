@@ -34,7 +34,9 @@ public class UIManager : MonoBehaviour
     public List<CardData> enemyShownCards = new List<CardData>();
 
     public GameObject[] CardParents = new GameObject[4];
-
+    public InputField inputField;
+    public Text PlayerName;
+    public Text EnemyName;
 
     List<UICard> PlayerCards = new List<UICard>();
     List<UICard> EnemyCards = new List<UICard>();
@@ -60,6 +62,13 @@ public class UIManager : MonoBehaviour
     public int ShownEnemyCardCount;
 
     public CardData chosenCard;
+
+    public void UpdateName(bool isPlayer, string pname){
+        if(isPlayer){
+            PlayerName.text = pname;
+        }
+        else EnemyName.text = pname;
+    }
 
     
 

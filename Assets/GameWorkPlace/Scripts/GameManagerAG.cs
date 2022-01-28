@@ -40,7 +40,8 @@ public class GameManagerAG : NetworkBehaviour
     }
 
     public void SetUp(){
-        localPlayer.Hand.AddCards(7,7);
+        cmdUpdateNames(localPlayer.netIdentity, UIManager.Instance.inputField.text);
+        localPlayer.Hand.AddCards(8,8);
         CurrentState = SelectCards;
         
     }
@@ -139,6 +140,17 @@ public class GameManagerAG : NetworkBehaviour
 
     #region //Commands
 
+    [Command (requiresAuthority = false)] public void cmdUpdateNames(NetworkIdentity player, string pname){
+
+        RpcUpdateNames(player, pname);
+    }
+
+    [ClientRpc] public void RpcUpdateNames(NetworkIdentity player, string pname){
+        if(player.isLocalPlayer){
+            UIManager.Instance.UpdateName(true, pname);
+        }
+        else UIManager.Instance.UpdateName(false, pname);
+    }
     [Command (requiresAuthority = false)] public void cmdCardRevealChoice(NetworkIdentity player, int slot){
         RpcCardRevealChoice(player, slot);
     }

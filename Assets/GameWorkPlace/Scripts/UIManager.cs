@@ -107,7 +107,7 @@ public class UIManager : MonoBehaviour
     public void HandleRevealConfirm(){
         if(GM.localPlayer.Confirm){
             
-            GM.cmdCardChoiceReady ( GM.localPlayer.netIdentity,  PlayerCards[currentHiddenSlot].GetCardData());
+            GM.cmdCardRevealChoice( GM.localPlayer.netIdentity,  enemySlot);
             
         }
     }
@@ -193,7 +193,7 @@ public class UIManager : MonoBehaviour
     public void ManageCursor(bool isPlayer, bool changeRow, float slotChange){
 
         if(isPlayer){
-            if(changeRow){
+            if(changeRow && GM.localPlayer.Hand.SCData.Count>0){
                 isFrontRow = !isFrontRow;
             }
             if(slotChange>0 && !isFrontRow){

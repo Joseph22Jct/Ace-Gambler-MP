@@ -68,7 +68,7 @@ public class GameManagerAG : NetworkBehaviour
     }
     public void InitiateCombat(){
         
-        UIManager.Instance.ResetCursors();
+        
         UIManager.Instance.HideCursors();
         CursorReset = false;
         if(PlayerReady && enemyReady){
@@ -89,6 +89,9 @@ public class GameManagerAG : NetworkBehaviour
     }
     public void CheckIfWon(){
         PickOpponentCardToReveal = false;
+        Debug.Log("Loop reset");
+        UIManager.Instance.ResetCursors();
+        UIManager.Instance.HideCursors();
         CurrentState = SelectCards;
     }
     
@@ -140,13 +143,14 @@ public class GameManagerAG : NetworkBehaviour
         RpcCardRevealChoice(player, slot);
     }
     [ClientRpc] public void RpcCardRevealChoice(NetworkIdentity player, int slot){
+        CurrentState = CheckIfWon;
         if(player.isLocalPlayer){
             return;
         }
         else{
             localPlayer.Hand.RevealCard(slot);
         }
-        CurrentState = CheckIfWon;
+        
 
     }
     [Command (requiresAuthority = false)] public void cmdCardChoiceReady(NetworkIdentity player, CardData card){

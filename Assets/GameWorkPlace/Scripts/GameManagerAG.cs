@@ -21,6 +21,9 @@ public class GameManagerAG : NetworkBehaviour
     bool PickOpponentCardToReveal;
     bool BattleWon;
     bool CursorReset = false;
+    int playerScore = 0;
+    int enemyScore = 0;
+    int RoundNumber = 0;
     private void Start() {
         CurrentState = SetUp;
     }
@@ -49,6 +52,7 @@ public class GameManagerAG : NetworkBehaviour
         if(!CursorReset && localPlayer.Hand.HCData.Count>0 && UIManager.Instance.HiddenEnemyCardCount > 0){
             UIManager.Instance.ResetCursors();
             CursorReset = true;
+            RoundNumber++;
 
         }
         
@@ -130,6 +134,11 @@ public class GameManagerAG : NetworkBehaviour
             localPlayer.Hand.RemoveCard(UIManager.Instance.currentHiddenSlot, false);
         }
 
+        if(BattleWon) playerScore++;
+
+        cmdUpdateScore(localPlayer.netIdentity, playerScore);
+        
+
         
         Debug.Log("Result of Battle: "+BattleWon);
         Debug.Log(PickOpponentCardToReveal);
@@ -138,7 +147,25 @@ public class GameManagerAG : NetworkBehaviour
         
     }
 
+    
+
     #region //Commands
+
+    [Command (requiresAuthority = false)] public void cmdUpdateScore(NetworkIdentity player, int score){
+
+        RpcUpdateScore(player, score);
+    }
+
+    [ClientRpc] public void RpcUpdateScore(NetworkIdentity player, int score){
+        if(player.isLocalPlayer){
+            playerScore = score;
+            UIManager.Instance.UpdateScore(true, score);
+        }
+        else{
+            enemyScore = score;
+            UIManager.Instance.UpdateScore(false, score);
+        } 
+    }
 
     [Command (requiresAuthority = false)] public void cmdUpdateNames(NetworkIdentity player, string pname){
 

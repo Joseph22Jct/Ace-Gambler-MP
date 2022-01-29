@@ -28,12 +28,15 @@ public class UIManager : MonoBehaviour
         }
         
     }
+    public Image DimScreen;
+
     public GameObject CardPrefab;
     public HandManager PlayerHand;
     
     public List<CardData> enemyShownCards = new List<CardData>();
 
     public GameObject[] CardParents = new GameObject[4];
+    public GameObject BattleArea;
     public InputField inputField;
     public Text PlayerName;
     public Text EnemyName;
@@ -63,11 +66,22 @@ public class UIManager : MonoBehaviour
 
     public CardData chosenCard;
 
+    public Text playerScore;
+    public Text enemyScore;
+
+    public void UpdateScore(bool isPlayer, int number){
+        if(isPlayer){
+            playerScore.text = number+"";
+        }
+        else enemyScore.text = number+"";
+    }
+
     public void UpdateName(bool isPlayer, string pname){
         if(isPlayer){
             PlayerName.text = pname;
         }
         else EnemyName.text = pname;
+        inputField.gameObject.SetActive(false);
     }
 
     
@@ -123,6 +137,8 @@ public class UIManager : MonoBehaviour
 
     public void ResetSelection(){
         currentHiddenSlot = 0;
+        oldHiddenSlot = 0 ;
+        oldEnemySlot = 0;
         currentShownSlot = 0;
         enemySlot = 0;
     }
@@ -263,10 +279,11 @@ public class UIManager : MonoBehaviour
             
             HandCursor.SetActive(true);
             PlayerCursor.SetActive(true);
-            //EnemyCards[enemySlot].gameObject.transform.localPosition = new Vector3(0,0,0);
-            oldEnemySlot = enemySlot;
-            //EnemyCards[enemySlot].gameObject.transform.position+=new Vector3(0,10,0);
-            HandCursor.transform.localScale = new Vector3(-1,-1,1);
+            // if(oldEnemySlot!=enemySlot)
+            // EnemyCards[oldEnemySlot].gameObject.transform.localPosition -= new Vector3(0,100,0);
+            // oldEnemySlot = enemySlot;
+            // EnemyCards[enemySlot].gameObject.transform.localPosition+=new Vector3(0,100,0);
+            // HandCursor.transform.localScale = new Vector3(-1,-1,1);
             
             HandCursor.transform.position = EnemyCards[enemySlot].gameObject.transform.position;
             PlayerCursor.transform.position = EnemyCards[enemySlot].gameObject.transform.position;
@@ -278,9 +295,10 @@ public class UIManager : MonoBehaviour
         else{
             currentHiddenSlot+= (int) Mathf.Sign(dir);
             EnemyCursor.SetActive(true);
-            //PlayerCards[oldHiddenSlot].transform.localPosition = new Vector3(0,0,0);
-            oldHiddenSlot = currentHiddenSlot;
-            //PlayerCards[currentHiddenSlot].transform.localPosition+=new Vector3(0,10,0);
+            // if(oldHiddenSlot!=currentHiddenSlot)
+            // PlayerCards[oldHiddenSlot].transform.localPosition -= new Vector3(0,50,0);
+            // oldHiddenSlot = currentHiddenSlot;
+            // PlayerCards[currentHiddenSlot].transform.localPosition+=new Vector3(0,50,0);
             HandCursor.transform.position = EnemyCards[enemySlot].transform.position;
             PlayerCursor.transform.position = EnemyCards[enemySlot].transform.position;
             
@@ -300,8 +318,11 @@ public class UIManager : MonoBehaviour
                 HandCursor.transform.localScale = new Vector3(1,1,1);
                 HandCursor.SetActive(true);
                 PlayerCursor.SetActive(true);
+                // if(oldHiddenSlot!=currentHiddenSlot)
+                // PlayerCards[oldHiddenSlot].transform.localPosition -= new Vector3(0,100,0);
                 //PlayerCards[oldHiddenSlot].transform.localPosition = new Vector3(0,0,0);
-                oldHiddenSlot = currentHiddenSlot;
+                // oldHiddenSlot = currentHiddenSlot;
+                // PlayerCards[currentHiddenSlot].transform.localPosition += new Vector3(0,100,0);
                 //PlayerCards[currentHiddenSlot].transform.localPosition+=new Vector3(0,10,0);
                 HandCursor.transform.position = PlayerCards[currentHiddenSlot].transform.position;
                 PlayerCursor.transform.position = PlayerCards[currentHiddenSlot].transform.position;
@@ -315,11 +336,14 @@ public class UIManager : MonoBehaviour
                 return;
             }
             else{
-
+                    //GET A MANAGER FOR THIS TODO
                 
                 EnemyCursor.SetActive(true);
                 //EnemyCards[enemySlot].gameObject.transform.localPosition = new Vector3(0,0,0);
-                oldEnemySlot = enemySlot;
+                // if(oldEnemySlot!=enemySlot)
+                // EnemyCards[oldEnemySlot].transform.localPosition -= new Vector3(0,50,0);
+                // oldEnemySlot = enemySlot;
+                // EnemyCards[enemySlot].transform.localPosition += new Vector3(0,50,0);
                 //EnemyCards[enemySlot].gameObject.transform.position+=new Vector3(0,10,0);
                 EnemyCursor.transform.position = EnemyCards[enemySlot].gameObject.transform.position;
                 

@@ -198,9 +198,6 @@ MonoBehaviour:
   CardDesign: {fileID: 4870404042215202791}
   Number: {fileID: 3021641684563387385}
   Type: {fileID: 5679443249619900435}
-  PlayerCursor: {fileID: 0}
-  EnemyCursor: {fileID: 0}
-  HandCursor: {fileID: 0}
 --- !u!1 &5391993229333733008
 GameObject:
   m_ObjectHideFlags: 0

@@ -24,6 +24,7 @@ public class GameManagerAG : NetworkBehaviour
     int playerScore = 0;
     int enemyScore = 0;
     int RoundNumber = 0;
+    bool PlayingAnimation;
     private void Start() {
         CurrentState = SetUp;
     }
@@ -35,6 +36,7 @@ public class GameManagerAG : NetworkBehaviour
         }
 
         if(GameStart){
+            if(!PlayingAnimation)
             CurrentState();
         }
 
@@ -56,7 +58,6 @@ public class GameManagerAG : NetworkBehaviour
 
         }
         
-        Debug.Log("Working");
         if(localPlayer.Vertical != 0 ){
             cmdMoveCards(localPlayer.netIdentity, true, 0, false);
             
@@ -79,11 +80,13 @@ public class GameManagerAG : NetworkBehaviour
         if(PlayerReady && enemyReady){
             PlayerReady = false;
             enemyReady = false;
-            BattleCalculation();
+            StartCoroutine(BattleCalculation());
+            
         }
-        if(PickOpponentCardToReveal){
+         if(PickOpponentCardToReveal){
             CurrentState = PickEnemyCard;
         }
+        
     }
     public void PickEnemyCard(){
         if(localPlayer.Horizontal!=0){
@@ -93,15 +96,30 @@ public class GameManagerAG : NetworkBehaviour
         
     }
     public void CheckIfWon(){
-        PickOpponentCardToReveal = false;
-        Debug.Log("Loop reset");
-        UIManager.Instance.ResetCursors();
-        UIManager.Instance.HideCursors();
-        CurrentState = SelectCards;
+        StopAllCoroutines();
+        if(PlayerReady && enemyReady){
+            PickOpponentCardToReveal = false;
+            PlayerReady = false;
+            enemyReady = false;
+            Debug.Log("Loop reset");
+            UIManager.Instance.ResetCursors();
+            UIManager.Instance.HideCursors();
+            CurrentState = SelectCards;
+
+        }
+        
     }
     
 
-    void BattleCalculation(){
+    IEnumerator BattleCalculation(){
+
+        StartCoroutine(UIManager.Instance.BattleUI.DimScreen(0.5f));
+        yield return  new WaitUntil(() => UIManager.Instance.BattleUI.animationDone);
+        UIManager.Instance.BattleUI.animationDone = false;
+        StartCoroutine(UIManager.Instance.BattleUI.BattleCards(playerCard, enemyCard));
+        yield return new WaitUntil(() => UIManager.Instance.BattleUI.animationDone);
+        UIManager.Instance.BattleUI.animationDone = false;
+        
         
         if(enemyCard.type == (playerCard.type+1)%4){
             if(playerCard.number != 0)
@@ -120,11 +138,14 @@ public class GameManagerAG : NetworkBehaviour
 
         if(playerCard.number> enemyCard.number && enemyCard.number!=0){
             BattleWon = true;
+            
         }
         else{
             BattleWon = false;
             PickOpponentCardToReveal = true;
         }
+
+        
 
         if(UIManager.Instance.isFrontRow){
             localPlayer.Hand.RemoveCard(UIManager.Instance.currentShownSlot, true);
@@ -137,6 +158,19 @@ public class GameManagerAG : NetworkBehaviour
         if(BattleWon) playerScore++;
 
         cmdUpdateScore(localPlayer.netIdentity, playerScore);
+
+        if(PickOpponentCardToReveal == false){
+            RpcReadyPlayer(localPlayer.netIdentity);
+            CurrentState = CheckIfWon;
+        }
+
+        
+
+
+
+        
+
+       
         
 
         
@@ -150,6 +184,18 @@ public class GameManagerAG : NetworkBehaviour
     
 
     #region //Commands
+    [Command (requiresAuthority = false)] public void cmdReadyPlayer(NetworkIdentity player){
+        RpcReadyPlayer(player);
+    }
+    [ClientRpc] public void RpcReadyPlayer(NetworkIdentity player){
+        if(player.isLocalPlayer){
+            PlayerReady = true;
+        }
+        else{
+            enemyReady = true;
+        }
+
+    }
 
     [Command (requiresAuthority = false)] public void cmdUpdateScore(NetworkIdentity player, int score){
 
@@ -182,12 +228,16 @@ public class GameManagerAG : NetworkBehaviour
         RpcCardRevealChoice(player, slot);
     }
     [ClientRpc] public void RpcCardRevealChoice(NetworkIdentity player, int slot){
-        CurrentState = CheckIfWon;
+        
         if(player.isLocalPlayer){
+            PlayerReady = true;
+            CurrentState = CheckIfWon;
             return;
         }
         else{
+            enemyReady = true;
             localPlayer.Hand.RevealCard(slot);
+            
         }
         
 

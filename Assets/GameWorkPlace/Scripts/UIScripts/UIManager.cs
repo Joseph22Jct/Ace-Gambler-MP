@@ -28,7 +28,9 @@ public class UIManager : MonoBehaviour
         }
         
     }
-    public Image DimScreen;
+
+    public BattleUIScript BattleUI;
+    
 
     public GameObject CardPrefab;
     public HandManager PlayerHand;
@@ -36,7 +38,7 @@ public class UIManager : MonoBehaviour
     public List<CardData> enemyShownCards = new List<CardData>();
 
     public GameObject[] CardParents = new GameObject[4];
-    public GameObject BattleArea;
+    
     public InputField inputField;
     public Text PlayerName;
     public Text EnemyName;

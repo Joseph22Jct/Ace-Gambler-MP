@@ -70,6 +70,13 @@ public class UIManager : MonoBehaviour
 
     public Text playerScore;
     public Text enemyScore;
+    public WinLossScreen WLScreen;
+
+    public void ShowVictoryLoss(bool isWon){
+        WLScreen.gameObject.SetActive(true);
+        StartCoroutine(WLScreen.ShowVictoryLoss(isWon));
+        
+    }
 
     public void UpdateScore(bool isPlayer, int number){
         if(isPlayer){
@@ -121,6 +128,7 @@ public class UIManager : MonoBehaviour
 
     public void HandleConfirm(){
         if(GM.localPlayer.Confirm){
+            SoundManager.Instance.Play("Confirm");
             if(isFrontRow){
                 GM.cmdCardChoiceReady ( GM.localPlayer.netIdentity,  PlayerRevealedCards[currentShownSlot].GetCardData());
             }
@@ -130,8 +138,8 @@ public class UIManager : MonoBehaviour
         }
     }
     public void HandleRevealConfirm(){
-        if(GM.localPlayer.Confirm){
-            
+        if(GM.localPlayer.Confirm){ 
+            SoundManager.Instance.Play("Confirm");
             GM.cmdCardRevealChoice( GM.localPlayer.netIdentity,  enemySlot);
             
         }
@@ -243,14 +251,17 @@ public class UIManager : MonoBehaviour
             
         }
         else{
-            if(slotChange > 0){
+            if(changeRow!=true){
+                if(slotChange > 0){
                 enemySlot ++;
                 enemySlot%=HiddenEnemyCardCount;
+                }
+                else{
+                    enemySlot--;
+                    if(enemySlot<0) enemySlot = HiddenEnemyCardCount-1;
+                }
             }
-            else{
-                enemySlot--;
-                if(enemySlot<0) enemySlot = HiddenEnemyCardCount-1;
-            }
+            
             MoveCursor(false);
 
         }

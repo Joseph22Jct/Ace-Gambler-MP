@@ -16,8 +16,8 @@ public class GameManagerAG : NetworkBehaviour
     public GameState CurrentState;
     CardData playerCard;
     CardData enemyCard;
-    bool PlayerReady;
-    bool enemyReady;
+    public bool PlayerReady;
+    public bool enemyReady;
     bool PickOpponentCardToReveal;
     bool BattleWon;
     bool CursorReset = false;
@@ -25,8 +25,13 @@ public class GameManagerAG : NetworkBehaviour
     int enemyScore = 0;
     int RoundNumber = 0;
     bool PlayingAnimation;
+    public bool ResetGame;
+    public int roundsForWin = 7;
+    public int RoundsTilDanger = 4;
+    
     private void Start() {
         CurrentState = SetUp;
+        
     }
 
     private void Update() {
@@ -45,10 +50,17 @@ public class GameManagerAG : NetworkBehaviour
     }
 
     public void SetUp(){
+        SoundManager.Instance.PlaySong("Battle Start");
         cmdUpdateNames(localPlayer.netIdentity, UIManager.Instance.inputField.text);
         localPlayer.Hand.AddCards(8,8);
         CurrentState = SelectCards;
         
+    }
+    public void DrawPhase(){
+        if(localPlayer.Hand.HCData.Count + localPlayer.Hand.SCData.Count<=4){
+            localPlayer.Hand.AddCards(8,4);
+        }
+        CurrentState = SelectCards;
     }
     public void SelectCards(){
         if(!CursorReset && localPlayer.Hand.HCData.Count>0 && UIManager.Instance.HiddenEnemyCardCount > 0){
@@ -59,10 +71,12 @@ public class GameManagerAG : NetworkBehaviour
         }
         
         if(localPlayer.Vertical != 0 ){
+            SoundManager.Instance.Play("Select");
             cmdMoveCards(localPlayer.netIdentity, true, 0, false);
             
         }
         if(localPlayer.Horizontal!=0){
+            SoundManager.Instance.Play("Select");
             cmdMoveCards(localPlayer.netIdentity,false, Mathf.Sign(localPlayer.Horizontal), false);
         }
         
@@ -83,31 +97,71 @@ public class GameManagerAG : NetworkBehaviour
             StartCoroutine(BattleCalculation());
             
         }
-         if(PickOpponentCardToReveal){
+         if(PickOpponentCardToReveal&& UIManager.Instance.BattleUI.animationDone){
             CurrentState = PickEnemyCard;
         }
         
     }
     public void PickEnemyCard(){
+        if(UIManager.Instance.HiddenEnemyCardCount<=1){
+            CurrentState = CheckIfWon;
+            return;
+        }
         if(localPlayer.Horizontal!=0){
+            SoundManager.Instance.Play("Select");
             cmdMoveCards(localPlayer.netIdentity, false, localPlayer.Horizontal, true);
         }
         UIManager.Instance.HandleRevealConfirm();
         
     }
     public void CheckIfWon(){
-        StopAllCoroutines();
+        
         if(PlayerReady && enemyReady){
+            StopAllCoroutines();
             PickOpponentCardToReveal = false;
             PlayerReady = false;
             enemyReady = false;
             Debug.Log("Loop reset");
             UIManager.Instance.ResetCursors();
             UIManager.Instance.HideCursors();
-            CurrentState = SelectCards;
+            RoundNumber++;
+            if(playerScore ==RoundsTilDanger || enemyScore == RoundsTilDanger){
+                SoundManager.Instance.PlaySong("Last Round");
+            }
+            if(playerScore ==roundsForWin || enemyScore == roundsForWin){
+                if (playerScore>enemyScore){
+                    UIManager.Instance.ShowVictoryLoss(true);
+                }
+                else{
+                    UIManager.Instance.ShowVictoryLoss(false);
+                }
+                CurrentState = WinScreen;
+            }
+            else CurrentState = DrawPhase;
 
         }
         
+    }
+
+    public void WinScreen(){
+        
+        
+
+        if(ResetGame){
+            ResetGame = false;
+            playerScore = 0;
+            enemyScore = 0;
+            RoundNumber = 0;
+            localPlayer.Hand.HCData = new List<CardData>();
+            localPlayer.Hand.SCData = new List<CardData>();
+            cmdUpdateScore(localPlayer.netIdentity, playerScore);
+            CmdUpdateCards(localPlayer.Hand.HCData, localPlayer.Hand.SCData, localPlayer.gameObject);
+            CurrentState = SetUp;
+
+
+        }
+
+
     }
     
 
@@ -160,7 +214,7 @@ public class GameManagerAG : NetworkBehaviour
         cmdUpdateScore(localPlayer.netIdentity, playerScore);
 
         if(PickOpponentCardToReveal == false){
-            RpcReadyPlayer(localPlayer.netIdentity);
+            cmdReadyPlayer(localPlayer.netIdentity);
             CurrentState = CheckIfWon;
         }
 

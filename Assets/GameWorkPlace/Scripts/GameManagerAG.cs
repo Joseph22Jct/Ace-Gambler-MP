@@ -52,21 +52,35 @@ public class GameManagerAG : NetworkBehaviour
     public void SetUp(){
         SoundManager.Instance.PlaySong("Battle Start");
         cmdUpdateNames(localPlayer.netIdentity, UIManager.Instance.inputField.text);
-        localPlayer.Hand.AddCards(8,8);
-        CurrentState = SelectCards;
+        if(localPlayer.Hand.HCData.Count==0) localPlayer.Hand.AddCards(8,8);
+
+        if(localPlayer.Hand.HCData.Count>0 && UIManager.Instance.HiddenEnemyCardCount>0 ){
+            CurrentState = SelectCards;
+        }
+        
         
     }
     public void DrawPhase(){
+        Debug.Log("Loop reset");
         if(localPlayer.Hand.HCData.Count + localPlayer.Hand.SCData.Count<=4){
             localPlayer.Hand.AddCards(8,4);
         }
-        CurrentState = SelectCards;
+        if(localPlayer.Hand.HCData.Count + localPlayer.Hand.SCData.Count >=5){
+            CurrentState = SelectCards;
+        }
+        
     }
     public void SelectCards(){
-        if(!CursorReset && localPlayer.Hand.HCData.Count>0 && UIManager.Instance.HiddenEnemyCardCount > 0){
-            UIManager.Instance.ResetCursors();
+        if(localPlayer.Hand.HCData.Count == 0){
             CursorReset = true;
             RoundNumber++;
+            UIManager.Instance.isFrontRow = true;
+
+        }
+        else if(!CursorReset && localPlayer.Hand.HCData.Count>0 && UIManager.Instance.HiddenEnemyCardCount > 0){
+            UIManager.Instance.ResetCursors();
+            CursorReset = true;
+            
 
         }
         
@@ -96,14 +110,30 @@ public class GameManagerAG : NetworkBehaviour
             enemyReady = false;
             StartCoroutine(BattleCalculation());
             
+            
         }
-         if(PickOpponentCardToReveal&& UIManager.Instance.BattleUI.animationDone){
-            CurrentState = PickEnemyCard;
-        }
+         
         
     }
+
+    public void WaitForCombat(){
+        if(PickOpponentCardToReveal&& UIManager.Instance.BattleUI.animationDone){
+            UIManager.Instance.BattleUI.animationDone = false;
+            CurrentState = PickEnemyCard;
+        }
+        else if(!PickOpponentCardToReveal&& UIManager.Instance.BattleUI.animationDone){
+            UIManager.Instance.BattleUI.animationDone = false;
+            Debug.Log("No picking for me.");
+            cmdReadyPlayer(localPlayer.netIdentity);
+            CurrentState = CheckIfWon;
+        }
+        
+
+    }
     public void PickEnemyCard(){
+        Debug.Log("Picking Time!");
         if(UIManager.Instance.HiddenEnemyCardCount<=1){
+            cmdReadyPlayer(localPlayer.netIdentity);
             CurrentState = CheckIfWon;
             return;
         }
@@ -121,7 +151,7 @@ public class GameManagerAG : NetworkBehaviour
             PickOpponentCardToReveal = false;
             PlayerReady = false;
             enemyReady = false;
-            Debug.Log("Loop reset");
+            
             UIManager.Instance.ResetCursors();
             UIManager.Instance.HideCursors();
             RoundNumber++;
@@ -176,23 +206,30 @@ public class GameManagerAG : NetworkBehaviour
         
         
         if(enemyCard.type == (playerCard.type+1)%4){
-            if(playerCard.number != 0)
+            //if(playerCard.number != 0)
             playerCard.number +=2;
+            Debug.Log("Advantage!");
             
         }
         if(enemyCard.type == (playerCard.type+2)%4){
             PickOpponentCardToReveal = true;
+            Debug.Log("Reveal Cards");
 
         }
         if(enemyCard.type == (playerCard.type+3)%4){
-            if(enemyCard.number != 0)
+            //if(enemyCard.number != 0)
             enemyCard.number +=2;
+            Debug.Log("Disadvantage...");
         }
         Debug.Log(playerCard.number + " vs " + enemyCard.number);
 
-        if(playerCard.number> enemyCard.number && enemyCard.number!=0){
+        if(playerCard.number == 0 && enemyCard.number!=0){
+        
             BattleWon = true;
             
+        }
+        else if(playerCard.number> enemyCard.number && enemyCard.number!=0){
+            BattleWon = true;
         }
         else{
             BattleWon = false;
@@ -213,10 +250,10 @@ public class GameManagerAG : NetworkBehaviour
 
         cmdUpdateScore(localPlayer.netIdentity, playerScore);
 
-        if(PickOpponentCardToReveal == false){
-            cmdReadyPlayer(localPlayer.netIdentity);
-            CurrentState = CheckIfWon;
-        }
+        
+
+        CurrentState = WaitForCombat;
+        
 
         
 
@@ -290,7 +327,12 @@ public class GameManagerAG : NetworkBehaviour
         }
         else{
             enemyReady = true;
+            if(PlayerReady && enemyReady){
+                CurrentState = CheckIfWon;
+            }
             localPlayer.Hand.RevealCard(slot);
+            return;
+            
             
         }
         
@@ -322,7 +364,7 @@ public class GameManagerAG : NetworkBehaviour
                 UIManager.Instance.ManageCursor(true, switchRows,direction);
             }
             else{
-                UIManager.Instance.ManageCursor(false,false, direction);
+                UIManager.Instance.ManageCursor(false,switchRows, direction);
 
             }
         }

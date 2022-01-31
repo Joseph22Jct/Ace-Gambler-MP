@@ -231,6 +231,9 @@ public class UIManager : MonoBehaviour
             if(changeRow && GM.localPlayer.Hand.SCData.Count>0){
                 isFrontRow = !isFrontRow;
             }
+            else if(changeRow && GM.localPlayer.Hand.HCData.Count >0){
+                isFrontRow =!isFrontRow;
+            }
             if(slotChange>0 && !isFrontRow){
                 currentHiddenSlot++;
                 currentHiddenSlot%=HiddenCardCount;

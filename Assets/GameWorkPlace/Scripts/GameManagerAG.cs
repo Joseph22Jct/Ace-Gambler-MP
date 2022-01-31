@@ -7,7 +7,6 @@ public class GameManagerAG : NetworkBehaviour
 {
     [SerializeField] public PlayerAG localPlayer;
     [SerializeField] public PlayerAG enemyPlayer;
-    public NetworkManager NM;
     public bool GameStart;
     public UIManager UIM;
     public int enemyHiddenCards;

@@ -705,7 +705,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: -0.000015258789, y: 48}
+  m_AnchoredPosition: {x: -0.000015258789, y: -18}
   m_SizeDelta: {x: 420, y: 0}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &414467263
@@ -1120,7 +1120,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &876125240
 GameObject:
@@ -1263,7 +1263,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1003071746
 GameObject:
@@ -1763,7 +1763,7 @@ RectTransform:
   - {fileID: 484663240}
   - {fileID: 1202018703}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -2436,6 +2436,67 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1724765921}
   m_CullTransparentMesh: 1
+--- !u!1001 &1798869390
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1384325819103250541, guid: fe368e17fc474f748ba5f8897e89e7eb, type: 3}
+      propertyPath: m_Name
+      value: NetworkManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 1384325819103250541, guid: fe368e17fc474f748ba5f8897e89e7eb, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1384325819103250544, guid: fe368e17fc474f748ba5f8897e89e7eb, type: 3}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1384325819103250544, guid: fe368e17fc474f748ba5f8897e89e7eb, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1384325819103250544, guid: fe368e17fc474f748ba5f8897e89e7eb, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1384325819103250544, guid: fe368e17fc474f748ba5f8897e89e7eb, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1384325819103250544, guid: fe368e17fc474f748ba5f8897e89e7eb, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1384325819103250544, guid: fe368e17fc474f748ba5f8897e89e7eb, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1384325819103250544, guid: fe368e17fc474f748ba5f8897e89e7eb, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1384325819103250544, guid: fe368e17fc474f748ba5f8897e89e7eb, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1384325819103250544, guid: fe368e17fc474f748ba5f8897e89e7eb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1384325819103250544, guid: fe368e17fc474f748ba5f8897e89e7eb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1384325819103250544, guid: fe368e17fc474f748ba5f8897e89e7eb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: fe368e17fc474f748ba5f8897e89e7eb, type: 3}
 --- !u!1 &1814168880
 GameObject:
   m_ObjectHideFlags: 0
@@ -2925,6 +2986,10 @@ PrefabInstance:
     - target: {fileID: 3330704553773700305, guid: a97bf21d44b3f4045875990f9c685f56, type: 3}
       propertyPath: m_Name
       value: SteamNetworkManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 3330704553773700305, guid: a97bf21d44b3f4045875990f9c685f56, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3330704553773700306, guid: a97bf21d44b3f4045875990f9c685f56, type: 3}
       propertyPath: buttons

@@ -83,7 +83,7 @@ public class GameManagerAG : NetworkBehaviour
 
         }
         
-        if(localPlayer.Vertical != 0 ){
+        if(localPlayer.Vertical != 0 && localPlayer.Hand.SCData.Count!=0 && localPlayer.Hand.HCData.Count!=0){
             SoundManager.Instance.Play("Select");
             cmdMoveCards(localPlayer.netIdentity, true, 0, false);
             

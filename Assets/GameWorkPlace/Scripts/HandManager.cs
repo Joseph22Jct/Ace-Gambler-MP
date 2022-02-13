@@ -37,10 +37,26 @@ public class HandManager : MonoBehaviour
         if(GM==null){
             GM = FindObjectOfType<GameManagerAG>();
         }
+
+        HCData = ShuffleHiddenCards();
         GM.CmdUpdateCards(HCData, SCData, this.gameObject);
 
 
         
+    }
+
+    public List<CardData> ShuffleHiddenCards(){
+        List<CardData> result = new List<CardData>();
+        int count = HCData.Count;
+        for( int i = 0; i< count; i++){
+            int rand = (int) Random.Range(0, HCData.Count);
+            result.Add(HCData[rand]);
+            HCData.RemoveAt(rand);
+        
+        }
+
+        return result;
+
     }
     public void RemoveCard(int slot, bool isFront){
         if(isFront){

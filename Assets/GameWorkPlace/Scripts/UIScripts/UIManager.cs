@@ -53,7 +53,7 @@ public class UIManager : MonoBehaviour
     public GameObject EnemyCursor;
     public GameObject HandCursor;
 
-    public int oldHiddenSlot = 0;
+    public int oldHiddenSlot = -1;
     public int oldEnemySlot = 0;
 
     public int currentHiddenSlot = 0;
@@ -147,8 +147,8 @@ public class UIManager : MonoBehaviour
 
     public void ResetSelection(){
         currentHiddenSlot = 0;
-        oldHiddenSlot = 0 ;
-        oldEnemySlot = 0;
+        oldHiddenSlot = -1 ;
+        oldEnemySlot = -1;
         currentShownSlot = 0;
         enemySlot = 0;
     }
@@ -331,17 +331,7 @@ public class UIManager : MonoBehaviour
                 
             }
             else{
-                HandCursor.transform.localScale = new Vector3(1,1,1);
-                HandCursor.SetActive(true);
-                PlayerCursor.SetActive(true);
-                // if(oldHiddenSlot!=currentHiddenSlot)
-                // PlayerCards[oldHiddenSlot].transform.localPosition -= new Vector3(0,100,0);
-                //PlayerCards[oldHiddenSlot].transform.localPosition = new Vector3(0,0,0);
-                // oldHiddenSlot = currentHiddenSlot;
-                // PlayerCards[currentHiddenSlot].transform.localPosition += new Vector3(0,100,0);
-                //PlayerCards[currentHiddenSlot].transform.localPosition+=new Vector3(0,10,0);
-                HandCursor.transform.position = PlayerCards[currentHiddenSlot].transform.position;
-                PlayerCursor.transform.position = PlayerCards[currentHiddenSlot].transform.position;
+                HandlePlayerCursorMovement();
                     
                 
             }
@@ -366,6 +356,28 @@ public class UIManager : MonoBehaviour
             }
         }
 
+
+    }
+
+    public void HandlePlayerCursorMovement(){
+        
+
+        HandCursor.transform.localScale = new Vector3(1,1,1);
+        HandCursor.SetActive(true);
+        PlayerCursor.SetActive(true);
+        if(oldHiddenSlot!=currentHiddenSlot && oldHiddenSlot !=-1){
+            if(PlayerCards[oldHiddenSlot].transform.localPosition.y >10)
+            PlayerCards[oldHiddenSlot].transform.localPosition -= new Vector3(0,100,0);
+            
+        }
+        
+        oldHiddenSlot = currentHiddenSlot;
+
+        if(PlayerCards[oldHiddenSlot].transform.localPosition.y <10)
+        PlayerCards[currentHiddenSlot].transform.localPosition += new Vector3(0,100,0);
+        
+        HandCursor.transform.position = PlayerCards[currentHiddenSlot].transform.position;
+        PlayerCursor.transform.position = PlayerCards[currentHiddenSlot].transform.position;
 
     }
 }
